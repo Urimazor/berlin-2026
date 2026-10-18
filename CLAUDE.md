@@ -5,14 +5,14 @@ Do NOT use berlin-2026-uri-mazor.vercel.app (behind Vercel login). berlin-2026.v
 
 ## Files
 - `source/Berlin Map.html` — the single source file (HTML + inline CSS/JS, Leaflet). Edit here.
-- `site/` — what gets deployed: index.html (built from source), styles.css (Modernist design system), api/*.js (Vercel serverless), package.json (@vercel/blob), vercel.json, assets/, manifest.webmanifest.
+- Repo root = what gets deployed: index.html (built from source), styles.css (Modernist design system), api/*.js (Vercel serverless), package.json (@vercel/blob), vercel.json, assets/, manifest.webmanifest. `.vercelignore` keeps source/, scripts/, data/ and *.md out of the deployment.
 - `data/live-data.json` — snapshot of live admin data (currently empty `{}`; live data lives in Vercel Blob and is not touched by deploys).
-- Icons `site/assets/favicon.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png` and `site/manifest.webmanifest` were missing from the handoff and were recreated on 2026-10-18; replace them with the originals from the live site if wanted.
+- Icons `assets/favicon.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png` and `manifest.webmanifest` were missing from the handoff and were recreated on 2026-10-18; replace them with the originals from the live site if wanted.
 
 ## Workflow for every change
 1. `scripts/pull-live.sh` — GET /api/data. If it returns data, it is the MASTER copy (admin edits made in the app). Copy its `points` into `const P=[…]` and `days` into `const DAYS=[…]` (and `trip` into TRIP) in source/Berlin Map.html before editing.
 2. Edit source/Berlin Map.html.
-3. `node scripts/build-site.mjs`, then commit and push to `main` on GitHub. Vercel deploys automatically (project Root Directory = `site`). `scripts/deploy.sh` is the manual fallback. Check a deploy via the GitHub commit status (context "Vercel").
+3. `node scripts/build-site.mjs`, then commit and push to `main` on GitHub. Vercel deploys automatically (project Root Directory must stay empty = repo root). `scripts/deploy.sh` is the manual fallback. Check a deploy via the GitHub commit status (context "Vercel").
 4. Verify the live URL serves the change and /api/config responds.
 5. If a change touches points/days, the live data still overrides the HTML. Apply the same change to live data only if the user asks: back up current JSON to Blob `backups/<ts>.json`, then PUT https://blob.vercel-storage.com/data.json (headers: authorization Bearer $BLOB_READ_WRITE_TOKEN, x-api-version 7, x-add-random-suffix 0, x-allow-overwrite 1, x-content-type application/json). Token: `vercel env pull`.
 
