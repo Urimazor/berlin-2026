@@ -17,5 +17,6 @@ Office tour of Berlin for the whole Mazor First team, 26–29.11.2026 (arrival T
 13. Admin interface (desktop): Google Sign-In, edit texts/routes/stops, drag points, add/delete points, Google link per point; saves publish immediately to Vercel Blob with backups.
 14. "פרטי טיסות ומלון" section (flights out/back — still to be filled — hotel and address); on desktop routes are reached from header dates, on mobile via "מסלולי סיור".
 15. Layer letters replaced with minimal line icons (camera, set square, columns, picture frame, fork & knife, bag, train, waves).
+16. 2026-10-18: Code moved to GitHub (Urimazor/berlin-2026); Vercel deploys automatically on every push to main.
 
 Open items: flight details; Sunday route; more points per user lists.
