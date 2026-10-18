@@ -8,7 +8,7 @@
 - `scripts/` — משיכת נתונים ונכסים מהאתר החי, בנייה ופרסום.
 
 ## פרסום אוטומטי דרך GitHub
-כל push ל-`main` מתפרסם אוטומטית ב-Vercel (פרויקט `berlin-2026`, Root Directory = `site`). אחרי עריכה של `source/Berlin Map.html` מריצים `node scripts/build-site.mjs` ודוחפים.
+כל push ל-`main` מתפרסם אוטומטית ב-Vercel (פרויקט `berlin-2026` → https://berlin-2026-chi.vercel.app, Root Directory = `site`). אחרי עריכה של `source/Berlin Map.html` מריצים `node scripts/build-site.mjs` ודוחפים.
 
 ## Claude Code (מומלץ — יכול גם לפרסם)
 1. פרקו את התיקייה, והיכנסו אליה בטרמינל.
