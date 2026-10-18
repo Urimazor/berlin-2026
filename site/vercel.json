@@ -1,0 +1,26 @@
+{
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/berlin",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/berlin/(.*)",
+      "destination": "/",
+      "permanent": false
+    }
+  ],
+  "headers": [
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
+        }
+      ]
+    }
+  ]
+}
