@@ -12,7 +12,7 @@ Do NOT use berlin-2026-uri-mazor.vercel.app (behind Vercel login). berlin-2026.v
 ## Workflow for every change
 1. `scripts/pull-live.sh` — GET /api/data. If it returns data, it is the MASTER copy (admin edits made in the app). Copy its `points` into `const P=[…]` and `days` into `const DAYS=[…]` (and `trip` into TRIP) in source/Berlin Map.html before editing.
 2. Edit source/Berlin Map.html.
-3. `node scripts/build-site.mjs`, then commit and push to `main` on GitHub. Vercel deploys automatically (project Root Directory = `site`). `scripts/deploy.sh` is the manual fallback.
+3. `node scripts/build-site.mjs`, then commit and push to `main` on GitHub. Vercel deploys automatically (project Root Directory = `site`). `scripts/deploy.sh` is the manual fallback. Check a deploy via the GitHub commit status (context "Vercel").
 4. Verify the live URL serves the change and /api/config responds.
 5. If a change touches points/days, the live data still overrides the HTML. Apply the same change to live data only if the user asks: back up current JSON to Blob `backups/<ts>.json`, then PUT https://blob.vercel-storage.com/data.json (headers: authorization Bearer $BLOB_READ_WRITE_TOKEN, x-api-version 7, x-add-random-suffix 0, x-allow-overwrite 1, x-content-type application/json). Token: `vercel env pull`.
 
