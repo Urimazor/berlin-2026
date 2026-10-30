@@ -29,6 +29,6 @@ Google Sign-In (desktop only). Env vars: GOOGLE_CLIENT_ID (72413425968-ou8f3a5kf
 - Restaurants layer: only places the user supplies.
 - Google Maps links: when the user gives a link, resolve it (follow redirect, coords from !3d/!4d), store the user's link in p[7], set the pin to Google's coords unless the user positioned it by sketch. Other points open their Google place page via place id p[9] (resolve via google.com/search?tbm=map&q=…, first ChIJ… id near the pin).
 - Hotel: Casa Camper Berlin, Weinmeisterstraße 1, 10178 Berlin-Mitte (pin placed by user sketch).
-- Design: Modernist design system (styles.css): Archivo, #f3f2f2 ground, #201e1d ink, single red accent #ec3013, 0 radius, 2px rules, minimal line icons (Lucide-style). UI language Hebrew, RTL.
+- Design: Modernist × Apple standard (styles.css): Assistant (Hebrew), light + OS dark appearance (dark opens on the dark basemap; map pins use fixed --m-ink/--m-paper), 44px touch targets on coarse pointers, press feedback, reduced-motion/contrast handled, #f3f2f2 ground, #201e1d ink, single red accent #ec3013, 0 radius, 2px rules, minimal line icons (Lucide-style). UI language Hebrew, RTL.
 - Mobile (≤820px): top date row hidden, collapsible sections, "הסתר כלים" toggle, map gets max area. Desktop: day buttons in header select routes.
 - Text the user provides goes in verbatim. Be concise in replies.
