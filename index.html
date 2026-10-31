@@ -84,6 +84,7 @@ aside{overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
 .hotelrow .t{font-weight:800;font-size:14px}.hotelrow .d{font-size:12px}
 .pin.stop{background:var(--color-accent);width:26px;height:26px;font-size:13px}
 .pin.tour{box-shadow:0 0 0 1.5px #1f5fd6}
+.logos .lg{cursor:pointer;transition:var(--t-press),opacity .15s;touch-action:manipulation}.logos .lg:active{transform:scale(var(--press-scale))}@media (hover:hover){.logos .lg:hover{opacity:.7}}.logos .lg:focus-visible{outline:2px solid var(--color-accent);outline-offset:3px}
 /* collapsible sidebar sections (all sizes): title + small chevron; closed = title only */
 [data-tog]{cursor:pointer;display:flex;align-items:center;gap:8px;min-height:28px;user-select:none;-webkit-user-select:none}
 [data-tog]::after{content:"";flex:none;width:7px;height:7px;margin-inline-start:auto;margin-inline-end:4px;border:solid var(--color-text);border-width:0 2px 2px 0;transform:translateY(-2px) rotate(45deg);transition:transform .2s var(--ease-out,ease)}
@@ -468,6 +469,9 @@ secs.forEach((x,n)=>x.classList.toggle('closed',Array.isArray(shut)?shut.include
 const keep=()=>{try{localStorage.setItem(CK,JSON.stringify(secs.map((x,n)=>x.classList.contains('closed')?n:-1).filter(n=>n>=0)))}catch(e){}};
 document.querySelectorAll('[data-tog]').forEach(k=>{const sec=k.closest('.sec');k.setAttribute('role','button');k.tabIndex=0;const sync=()=>k.setAttribute('aria-expanded',!sec.classList.contains('closed'));sync();k._sync=sync;const t=()=>{sec.classList.toggle('closed');sync();if(sec.classList.contains('toursec')){const r=document.querySelector('.routesec');r.classList.toggle('closed',sec.classList.contains('closed'));const rk=r.querySelector('[data-tog]');if(rk._sync)rk._sync()}keep();setTimeout(()=>map.invalidateSize(),60)};k.onclick=t;k.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
 renderTrip();renderLayers();renderDays();renderAlts();renderList();
+// Clicking a header logo resets the map: no route, all layers on, search cleared, popups closed, centred
+function resetAll(){map.closePopup();state.q='';state.sel=null;const q=document.getElementById('q');if(q)q.value='';state.alt=1;try{localStorage.removeItem('bm_fri_alt')}catch(e){}TSET=new Set(curAlt().stops.map(x=>x.id));setAll(true);selectDay(null);renderAlts()}
+document.querySelectorAll('.logos .lg').forEach(l=>{l.setAttribute('role','button');l.tabIndex=0;l.title='איפוס המפה';l.setAttribute('aria-label','איפוס המפה והבחירות');l.onclick=resetAll;l.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();resetAll()}}});
 </script>
 <script>
 window.ED=(function(){
