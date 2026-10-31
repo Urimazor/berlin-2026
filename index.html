@@ -52,7 +52,8 @@ aside{border-left:2px solid var(--color-rule);display:flex;flex-direction:column
 @media (min-width:821px){.routesec>.kicker,.routesec>.days{display:none}.routesec:not(.has-day){display:none}.routesec .dayinfo{margin-top:0}}
 .dayinfo{margin-top:10px;font-size:13px;text-wrap:pretty}
 .search{margin:0}
-.list{overflow:auto;flex:1;min-height:0}
+.list{flex:1 0 auto}
+aside{overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
 .item{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:start;padding:10px 20px;border-bottom:1px solid var(--color-line);cursor:pointer}
 @media (hover:hover){.item:hover{background:color-mix(in srgb,var(--color-text) 6%,transparent)}}
 .item.sel{background:var(--color-accent-100)}
