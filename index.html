@@ -208,6 +208,15 @@ body.editing .editbar{display:flex}
       <div class="kicker" data-tog>פרטי טיסות ומלון</div>
       <div class="trip" id="trip"></div>
     </div>
+    <div class="sec" data-col>
+      <div class="kicker" data-tog>רקע המפה</div>
+      <div class="days" id="bases" style="grid-template-columns:repeat(3,1fr)"><button data-k="map" class="on"><b>מפה</b>רקע בהיר</button><button data-k="dark"><b>מפה כהה</b>קונטרסט הפוך</button><button data-k="dop"><b>אורתופוטו</b>2024 · 20 ס"מ</button></div>
+      <label class="refrow" id="refrow" style="display:none"><input type="checkbox" id="ref" checked>שמות רחובות מעל התצלום</label>
+    </div>
+    <div class="sec layersec" data-col>
+      <div class="sechead" style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="kicker" data-tog style="margin:0;margin-inline-end:auto">שכבות</div><button class="btn btn-secondary" id="allOn" style="padding:4px 10px;font-size:12px">הדלק הכל</button><button class="btn btn-secondary" id="allOff" style="padding:4px 10px;font-size:12px">כבה הכל</button></div>
+      <div class="layers" id="layers"></div>
+    </div>
     <div class="sec toursec" data-col>
       <div class="kicker" data-tog>סיור יום שישי 27.11 · שלוש חלופות</div>
       <div class="days" id="alts" style="grid-template-columns:repeat(3,1fr)"></div>
@@ -217,15 +226,6 @@ body.editing .editbar{display:flex}
       <div class="kicker" data-tog>מסלולי סיור</div>
       <div class="days" id="days"></div>
       <div class="dayinfo" id="dayinfo"></div>
-    </div>
-    <div class="sec" data-col>
-      <div class="kicker" data-tog>רקע המפה</div>
-      <div class="days" id="bases" style="grid-template-columns:repeat(3,1fr)"><button data-k="map" class="on"><b>מפה</b>רקע בהיר</button><button data-k="dark"><b>מפה כהה</b>קונטרסט הפוך</button><button data-k="dop"><b>אורתופוטו</b>2024 · 20 ס"מ</button></div>
-      <label class="refrow" id="refrow" style="display:none"><input type="checkbox" id="ref" checked>שמות רחובות מעל התצלום</label>
-    </div>
-    <div class="sec layersec" data-col>
-      <div class="sechead" style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="kicker" data-tog style="margin:0;margin-inline-end:auto">שכבות</div><button class="btn btn-secondary" id="allOn" style="padding:4px 10px;font-size:12px">הדלק הכל</button><button class="btn btn-secondary" id="allOff" style="padding:4px 10px;font-size:12px">כבה הכל</button></div>
-      <div class="layers" id="layers"></div>
     </div>
     <div class="sec al" style="padding-top:10px;padding-bottom:10px">
       <input class="input search" id="q" placeholder="חיפוש מקום, שכונה או אדריכל">
@@ -391,7 +391,7 @@ let TSET=new Set(curAlt().stops.map(x=>x.id));
 const tourOf=d=>d&&d.d===FRI?curAlt():null;
 const altsOf=id=>ALTS.filter(a=>a.stops.some(x=>x.id===id)).map(a=>a.n);
 const friDay=()=>DAYS.find(x=>x.d===FRI);
-function setAlt(n){state.alt=n;try{localStorage.setItem('bm_fri_alt',n)}catch(e){}TSET=new Set(curAlt().stops.map(x=>x.id));buildMarkers();const f=friDay();if(f&&state.day!==f.id)selectDay(f.id);else{renderDays();renderList();drawRoute()}renderAlts()}
+function setAlt(n){state.alt=n;{const r=document.querySelector('.routesec');if(r&&r.classList.contains('closed')){r.classList.remove('closed');const rk=r.querySelector('[data-tog]');if(rk&&rk._sync)rk._sync()}}try{localStorage.setItem('bm_fri_alt',n)}catch(e){}TSET=new Set(curAlt().stops.map(x=>x.id));buildMarkers();const f=friDay();if(f&&state.day!==f.id)selectDay(f.id);else{renderDays();renderList();drawRoute()}renderAlts()}
 function renderAlts(){const el=document.getElementById('alts');if(!el)return;el.innerHTML='';const fd=friDay(),onFri=fd&&state.day===fd.id;ALTS.forEach(a=>{const b=document.createElement('button');b.className=state.alt===a.n?'on':'';b.setAttribute('aria-pressed',state.alt===a.n);b.innerHTML=`<b>חלופה ${a.n}</b>${a.s}`;b.onclick=()=>setAlt(a.n);el.appendChild(b)});const a=curAlt();document.getElementById('altnote').innerHTML=`<b>חלופה ${a.n}. ${a.t}</b>${a.tag?`<br><span class="bk-k">${a.tag}</span>`:''}<br>יציאה מהמלון <bdi dir="ltr">09:45</bdi>, ${a.stops.length} תחנות, סיום ליד הרייכסטאג. סיורי הרייכסטאג <bdi dir="ltr">18:30 / 20:00</bdi>.${onFri?'':'<br><button class="lnkb" data-fri>הצג במפה</button>'}`}
 document.addEventListener('click',e=>{if(e.target.closest('[data-fri]'))setAlt(state.alt)});
 const tt=r=>`<table class="tt"><tbody>${r.map(x=>`<tr><td><bdi dir="ltr">${x[0]}</bdi></td><td>${x[1]}</td></tr>`).join('')}</tbody></table>`;
@@ -458,11 +458,11 @@ function setAll(on){LAYERS.forEach(l=>{if(on){state.on.add(l.id);groups[l.id].ad
 document.getElementById('allOn').onclick=()=>setAll(true);document.getElementById('allOff').onclick=()=>setAll(false);
 document.querySelectorAll('.dates button').forEach(b=>b.onclick=()=>selectDay(state.day===b.dataset.day?null:b.dataset.day));
 document.getElementById('uitoggle').onclick=e=>{const f=document.body.classList.toggle('full');e.currentTarget.textContent=f?'הצג כלים':'הסתר כלים';e.currentTarget.setAttribute('aria-pressed',f);setTimeout(()=>map.invalidateSize(),50)};
-const MOB=matchMedia('(max-width:820px)').matches,CK=MOB?'bm_closed_m':'bm_closed_d';const secs=[...document.querySelectorAll('aside .sec')].filter(x=>x.querySelector('[data-tog]'));
+const MOB=matchMedia('(max-width:820px)').matches,CK=MOB?'bm_closed2_m':'bm_closed2_d';const secs=[...document.querySelectorAll('aside .sec')].filter(x=>x.querySelector('[data-tog]'));
 let shut=null;try{shut=JSON.parse(localStorage.getItem(CK))}catch(e){}
 secs.forEach((x,n)=>x.classList.toggle('closed',Array.isArray(shut)?shut.includes(n):MOB&&x.hasAttribute('data-col')));
 const keep=()=>{try{localStorage.setItem(CK,JSON.stringify(secs.map((x,n)=>x.classList.contains('closed')?n:-1).filter(n=>n>=0)))}catch(e){}};
-document.querySelectorAll('[data-tog]').forEach(k=>{const sec=k.closest('.sec');k.setAttribute('role','button');k.tabIndex=0;const sync=()=>k.setAttribute('aria-expanded',!sec.classList.contains('closed'));sync();const t=()=>{sec.classList.toggle('closed');sync();keep();setTimeout(()=>map.invalidateSize(),60)};k.onclick=t;k.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
+document.querySelectorAll('[data-tog]').forEach(k=>{const sec=k.closest('.sec');k.setAttribute('role','button');k.tabIndex=0;const sync=()=>k.setAttribute('aria-expanded',!sec.classList.contains('closed'));sync();k._sync=sync;const t=()=>{sec.classList.toggle('closed');sync();if(sec.classList.contains('toursec')){const r=document.querySelector('.routesec');r.classList.toggle('closed',sec.classList.contains('closed'));const rk=r.querySelector('[data-tog]');if(rk._sync)rk._sync()}keep();setTimeout(()=>map.invalidateSize(),60)};k.onclick=t;k.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
 renderTrip();renderLayers();renderDays();renderAlts();renderList();
 </script>
 <script>
