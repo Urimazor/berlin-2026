@@ -49,7 +49,7 @@ aside{border-left:2px solid var(--color-rule);display:flex;flex-direction:column
 .days button.on{background:var(--color-accent);color:var(--color-on-accent)}
 .days button:focus-visible,.item:focus-visible,.layer:has(input:focus-visible){outline:2px solid var(--color-accent);outline-offset:2px}
 .trip{display:grid;gap:0;font-size:13px}.trip .r{display:grid;grid-template-columns:76px 1fr;gap:8px;padding:6px 0;border-top:1px solid var(--color-line)}.trip .r:first-child{border-top:0}.trip .k{font-weight:700}.trip .v{white-space:pre-line;text-wrap:pretty}.trip .muted{color:var(--color-neutral-700)}.trip button.lnkb{all:unset;cursor:pointer;color:var(--color-accent-700);text-decoration:underline;font-size:12px}.trip textarea{font:inherit;border:2px solid var(--color-rule);padding:4px 6px;border-radius:0;background:var(--color-bg);width:100%;box-sizing:border-box}
-@media (min-width:821px){.routesec>.kicker,.routesec>.days{display:none}.routesec:not(.has-day){display:none}.routesec .dayinfo{margin-top:0}}
+@media (min-width:821px){.routesec>.days{display:none}.routesec:not(.has-day){display:none}.routesec .dayinfo{margin-top:0}}
 .dayinfo{margin-top:10px;font-size:13px;text-wrap:pretty}
 .search{margin:0}
 .list{flex:1 0 auto}
@@ -84,6 +84,17 @@ aside{overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
 .hotelrow .t{font-weight:800;font-size:14px}.hotelrow .d{font-size:12px}
 .pin.stop{background:var(--color-accent);width:26px;height:26px;font-size:13px}
 .pin.tour{box-shadow:0 0 0 1.5px #1f5fd6}
+/* collapsible sidebar sections (all sizes): title + small chevron; closed = title only */
+[data-tog]{cursor:pointer;display:flex;align-items:center;gap:8px;min-height:28px;user-select:none;-webkit-user-select:none}
+[data-tog]::after{content:"";flex:none;width:7px;height:7px;margin-inline-start:auto;margin-inline-end:4px;border:solid var(--color-text);border-width:0 2px 2px 0;transform:translateY(-2px) rotate(45deg);transition:transform .2s var(--ease-out,ease)}
+.sec.closed [data-tog]::after{transform:rotate(135deg)}
+@media (hover:hover){[data-tog]:hover::after{border-color:var(--color-accent)}}
+[data-tog]:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+.sec.closed>:not([data-tog]):not(.sechead),.sec.closed .sechead>:not([data-tog]){display:none!important}
+.sec.closed [data-tog],.sec.closed .sechead{margin-bottom:0!important}
+.sechead [data-tog]{flex:1}
+@media (min-width:821px){aside:has(.layersec.closed) .hotelrow.al{display:grid!important}aside:has(.layersec.closed) .list.al,aside:has(.layersec.closed) .sec.al{display:block!important}}
+@media (prefers-reduced-motion:reduce){[data-tog]::after{transition:none}}
 .tt{width:100%;border-collapse:collapse;margin:4px 0}.tt td,.tt th{padding:3px 0 3px 8px;border-top:1px solid var(--color-line);vertical-align:top;text-align:right}.tt td:first-child{font-weight:800;white-space:nowrap}.tt.cmp{font-size:11px}.tt.cmp th{font-weight:800}.tt.cmp td:first-child{white-space:normal}
 .fx{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--color-line)}.fx>div{padding:4px 0;border-bottom:1px solid var(--color-line)}.fx span{display:block;font-size:11px;color:var(--color-muted)}.fx b{display:block;font-size:15px;font-weight:800}
 details.bk>summary{cursor:pointer;list-style:none;margin:0;display:flex;align-items:center;min-height:24px}details.bk>summary::-webkit-details-marker{display:none}details.bk>summary::after{content:"+";margin-inline-start:auto;font-weight:700}details.bk[open]>summary::after{content:"−"}details.bk[open]>summary{margin-bottom:4px}
@@ -132,8 +143,8 @@ body.editing .editbar{display:flex}
 .stopctl{display:flex;gap:2px}
 #map.adding{cursor:crosshair}
 @media (max-width:820px){.adminbtn,.editbar{display:none!important}}
-@media (max-width:820px){header.top .dates{display:none}[data-tog]{cursor:pointer;display:flex;align-items:center;gap:8px;min-height:32px}[data-tog]::after{content:"−";margin-inline-start:auto;font-size:18px;font-weight:700;line-height:1;color:var(--color-text)}.sec.closed [data-tog]::after{content:"+"}header.top{padding:6px 12px;gap:2px;align-items:center}header.top .brand{font-size:20px;line-height:1.1}header.top .sub{display:none}main{grid-template-rows:minmax(0,1fr) auto!important}aside{max-height:48vh;overflow:auto}aside .list{flex:none;overflow:visible}aside .sec{padding:4px 12px!important}aside .kicker{margin-bottom:4px}aside [data-tog]{min-height:30px}aside .sechead{margin-bottom:4px!important}aside .trip{display:grid;gap:0;font-size:13px}.trip .r{display:grid;grid-template-columns:76px 1fr;gap:8px;padding:6px 0;border-top:1px solid var(--color-line)}.trip .r:first-child{border-top:0}.trip .k{font-weight:700}.trip .v{white-space:pre-line;text-wrap:pretty}.trip .muted{color:var(--color-neutral-700)}.trip button.lnkb{all:unset;cursor:pointer;color:var(--color-accent-700);text-decoration:underline;font-size:12px}.trip textarea{font:inherit;border:2px solid var(--color-rule);padding:4px 6px;border-radius:0;background:var(--color-bg);width:100%;box-sizing:border-box}
-@media (min-width:821px){.routesec>.kicker,.routesec>.days{display:none}.routesec:not(.has-day){display:none}.routesec .dayinfo{margin-top:0}}
+@media (max-width:820px){header.top .dates{display:none}[data-tog]{cursor:pointer;display:flex;align-items:center;gap:8px;min-height:32px}header.top{padding:6px 12px;gap:2px;align-items:center}header.top .brand{font-size:20px;line-height:1.1}header.top .sub{display:none}main{grid-template-rows:minmax(0,1fr) auto!important}aside{max-height:48vh;overflow:auto}aside .list{flex:none;overflow:visible}aside .sec{padding:4px 12px!important}aside .kicker{margin-bottom:4px}aside [data-tog]{min-height:30px}aside .sechead{margin-bottom:4px!important}aside .trip{display:grid;gap:0;font-size:13px}.trip .r{display:grid;grid-template-columns:76px 1fr;gap:8px;padding:6px 0;border-top:1px solid var(--color-line)}.trip .r:first-child{border-top:0}.trip .k{font-weight:700}.trip .v{white-space:pre-line;text-wrap:pretty}.trip .muted{color:var(--color-neutral-700)}.trip button.lnkb{all:unset;cursor:pointer;color:var(--color-accent-700);text-decoration:underline;font-size:12px}.trip textarea{font:inherit;border:2px solid var(--color-rule);padding:4px 6px;border-radius:0;background:var(--color-bg);width:100%;box-sizing:border-box}
+@media (min-width:821px){.routesec>.days{display:none}.routesec:not(.has-day){display:none}.routesec .dayinfo{margin-top:0}}
 .dayinfo{margin-top:6px;font-size:12px}aside .days button{padding:5px 4px}aside .hotelrow{padding:6px 12px}aside .item{padding:6px 12px}aside:has(.layersec.closed) .al{display:none!important}header.top{grid-template-columns:auto 1fr auto!important;gap:8px!important;padding-top:max(6px,env(safe-area-inset-top))!important}.hdright{gap:10px;justify-content:flex-end}.logos{gap:10px}.lg{gap:4px;font-size:11px}.lg img,.lg:last-child img{height:16px!important}.uitoggle{padding:3px 8px;min-height:26px;font-size:11px;margin-inline-start:auto}.leaflet-control-attribution{font-size:11px!important;max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sec.closed>:not([data-tog]):not(.sechead),.sec.closed .sechead>:not([data-tog]){display:none!important}.sec.closed [data-tog],.sec.closed .sechead{margin-bottom:0}.sechead [data-tog]{flex:1}.uitoggle{display:block}body.full aside{display:none}body.full main{grid-template-rows:1fr!important}main{grid-template-columns:1fr;grid-template-rows:1fr 46vh}aside{order:2;border-left:0;border-top:2px solid var(--color-rule)}.brand{font-size:24px}header.top{grid-template-columns:1fr;gap:8px}}
 /* Modernist × Apple: response on press, themed map chrome, touch targets, OS preferences */
 .dates button,.days button,.uitoggle,.adminbtn,.editbar button,.pe-b button,.stopctl button,.trip button.lnkb,.bk button.lnkb,.leaflet-bar a{transition:var(--t-press);touch-action:manipulation}
@@ -447,8 +458,11 @@ function setAll(on){LAYERS.forEach(l=>{if(on){state.on.add(l.id);groups[l.id].ad
 document.getElementById('allOn').onclick=()=>setAll(true);document.getElementById('allOff').onclick=()=>setAll(false);
 document.querySelectorAll('.dates button').forEach(b=>b.onclick=()=>selectDay(state.day===b.dataset.day?null:b.dataset.day));
 document.getElementById('uitoggle').onclick=e=>{const f=document.body.classList.toggle('full');e.currentTarget.textContent=f?'הצג כלים':'הסתר כלים';e.currentTarget.setAttribute('aria-pressed',f);setTimeout(()=>map.invalidateSize(),50)};
-document.querySelectorAll('[data-tog]').forEach(k=>{k.setAttribute('role','button');k.tabIndex=0;const t=()=>{if(!matchMedia('(max-width:820px)').matches)return;k.closest('.sec').classList.toggle('closed');setTimeout(()=>map.invalidateSize(),60)};k.onclick=t;k.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
-if(matchMedia('(max-width:820px)').matches)document.querySelectorAll('[data-col]').forEach(s=>s.classList.add('closed'));
+const MOB=matchMedia('(max-width:820px)').matches,CK=MOB?'bm_closed_m':'bm_closed_d';const secs=[...document.querySelectorAll('aside .sec')].filter(x=>x.querySelector('[data-tog]'));
+let shut=null;try{shut=JSON.parse(localStorage.getItem(CK))}catch(e){}
+secs.forEach((x,n)=>x.classList.toggle('closed',Array.isArray(shut)?shut.includes(n):MOB&&x.hasAttribute('data-col')));
+const keep=()=>{try{localStorage.setItem(CK,JSON.stringify(secs.map((x,n)=>x.classList.contains('closed')?n:-1).filter(n=>n>=0)))}catch(e){}};
+document.querySelectorAll('[data-tog]').forEach(k=>{const sec=k.closest('.sec');k.setAttribute('role','button');k.tabIndex=0;const sync=()=>k.setAttribute('aria-expanded',!sec.classList.contains('closed'));sync();const t=()=>{sec.classList.toggle('closed');sync();keep();setTimeout(()=>map.invalidateSize(),60)};k.onclick=t;k.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
 renderTrip();renderLayers();renderDays();renderAlts();renderList();
 </script>
 <script>
