@@ -162,6 +162,8 @@ html[dir=ltr] .sec.closed [data-tog]::after{transform:rotate(-45deg)}
 @media (pointer:coarse){.langbtn{position:relative}.langbtn::before{content:'';position:absolute;inset:-10px -4px}}
 .langbtn .ll{display:none}
 html[dir=ltr] .trip .r{grid-template-columns:104px 1fr}
+.trip.emerg .r{grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline}.trip.emerg .n{grid-column:1/-1;color:var(--color-neutral-700);font-size:12px}.trip.emerg .eh{font-size:11px;color:var(--color-neutral-700);letter-spacing:.04em}.trip.emerg .eh span:last-child{display:none}.trip.emerg a.tel{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;text-decoration:none;border-bottom:2px solid currentColor}html[dir=ltr] .trip.emerg .r{grid-template-columns:1fr auto}
+@media (pointer:coarse){.trip.emerg a.tel{display:inline-flex;align-items:center;min-height:44px}}
 @media (max-width:440px){html[dir=ltr] .lg span{display:none}}
 /* Modernist × Apple: response on press, themed map chrome, touch targets, OS preferences */
 .dates button,.days button,.uitoggle,.adminbtn,.editbar button,.pe-b button,.stopctl button,.trip button.lnkb,.bk button.lnkb,.leaflet-bar a{transition:var(--t-press);touch-action:manipulation}
@@ -225,6 +227,21 @@ html[dir=ltr] .trip .r{grid-template-columns:104px 1fr}
     <div class="sec tripsec" data-col>
       <div class="kicker" data-tog data-en="Flights and hotel">פרטי טיסות ומלון</div>
       <div class="trip" id="trip"></div>
+    </div>
+    <div class="sec emsec" data-col>
+      <div class="kicker" data-tog data-en="Emergency numbers">מספרי חירום</div>
+      <div class="trip emerg">
+        <div class="r eh"><span data-en="What happened?">מה קרה?</span><span data-en="Dial">לחייג</span><span data-en="Note">הערה</span></div>
+        <div class="r"><div class="k" data-en="🚑 Ambulance">🚑 אמבולנס</div><a class="tel" href="tel:112" dir="ltr">112</a><div class="n" data-en="Life-threatening emergency. English spoken. Works without a SIM.">מצב מסכן חיים. מדברים אנגלית. עובד גם בלי SIM.</div></div>
+        <div class="r"><div class="k" data-en="🚒 Fire brigade">🚒 מכבי אש</div><a class="tel" href="tel:112" dir="ltr">112</a><div class="n" data-en="Same number as the ambulance.">אותו מספר כמו אמבולנס.</div></div>
+        <div class="r"><div class="k" data-en="👮 Police">👮 משטרה</div><a class="tel" href="tel:110" dir="ltr">110</a><div class="n" data-en="Crime, violence, threats, harassment.">פשע, אלימות, איום, הטרדה.</div></div>
+        <div class="r"><div class="k" data-en="🩺 Doctor, non-urgent">🩺 רופא, לא דחוף</div><a class="tel" href="tel:116117" dir="ltr">116 117</a><div class="n" data-en="Evenings, weekends, problems that are not life-threatening.">ערב, סופ"ש, בעיה שאינה מסכנת חיים.</div></div>
+        <div class="r"><div class="k" data-en="☠️ Poisoning / too much alcohol">☠️ הרעלה / שתייה מוגזמת</div><a class="tel" href="tel:+493019240" dir="ltr">+49 30 19240</a><div class="n" data-en="If someone loses consciousness: <a href=&quot;tel:112&quot; dir=&quot;ltr&quot;>112</a>.">אם יש איבוד הכרה: <a href="tel:112" dir="ltr">112</a>.</div></div>
+        <div class="r"><div class="k" data-en="🇮🇱 Situation Room, Israeli Foreign Ministry">🇮🇱 חדר המצב, משרד החוץ</div><a class="tel" href="tel:+97225303155" dir="ltr">+972-2-5303155</a><div class="n" data-en="24/7, any emergency involving an Israeli."><bdi>24/7</bdi>, כל חירום של ישראלי.</div></div>
+        <div class="r"><div class="k" data-en="🇮🇱 Embassy of Israel">🇮🇱 שגרירות ישראל</div><a class="tel" href="tel:+493089045500" dir="ltr">+49 30 89045500</a><div class="n" data-en="Switchboard. Consulate: <a href=&quot;tel:+493089045511&quot; dir=&quot;ltr&quot;>+49 30 89045511</a>.">מרכזייה. קונסוליה: <a href="tel:+493089045511" dir="ltr">+49 30 89045511</a>.</div></div>
+        <div class="r"><div class="k" data-en="🏨 Hotel – Casa Camper">🏨 המלון – Casa Camper</div><a class="tel" href="tel:+493020003410" dir="ltr">+49 30 20003410</a><div class="n" dir="ltr">Weinmeisterstraße 1, 10178 Berlin</div></div>
+        <div class="r"><div class="k" data-en="🚕 Taxi">🚕 מונית</div><a class="tel" href="tel:+4930202020" dir="ltr">+49 30 202020</a><div class="n" dir="ltr">Taxi Berlin</div></div>
+      </div>
     </div>
     <div class="sec" data-col>
       <div class="kicker" data-tog data-en="Map background">רקע המפה</div>
@@ -572,7 +589,7 @@ function setAll(on){LAYERS.forEach(l=>{if(on){state.on.add(l.id);groups[l.id].ad
 document.getElementById('allOn').onclick=e=>{e.stopPropagation();setAll(true)};document.getElementById('allOff').onclick=e=>{e.stopPropagation();setAll(false)};document.querySelector('.lbtns').onkeydown=e=>e.stopPropagation();
 document.querySelectorAll('.dates button').forEach(b=>b.onclick=()=>selectDay(state.day===b.dataset.day?null:b.dataset.day));
 document.getElementById('uitoggle').onclick=e=>{const f=document.body.classList.toggle('full');e.currentTarget.textContent=f?tr('הצג כלים','Show tools'):tr('הסתר כלים','Hide tools');e.currentTarget.setAttribute('aria-pressed',f);setTimeout(()=>map.invalidateSize(),50)};
-const MOB=matchMedia('(max-width:820px)').matches,CK=MOB?'bm_closed2_m':'bm_closed2_d';const secs=[...document.querySelectorAll('aside .sec')].filter(x=>x.querySelector('[data-tog]'));
+const MOB=matchMedia('(max-width:820px)').matches,CK=MOB?'bm_closed3_m':'bm_closed3_d';const secs=[...document.querySelectorAll('aside .sec')].filter(x=>x.querySelector('[data-tog]'));
 let shut=null;try{shut=JSON.parse(localStorage.getItem(CK))}catch(e){}
 secs.forEach((x,n)=>x.classList.toggle('closed',Array.isArray(shut)?shut.includes(n):MOB&&x.hasAttribute('data-col')));
 const keep=window.keepSecs=()=>{try{localStorage.setItem(CK,JSON.stringify(secs.map((x,n)=>x.classList.contains('closed')?n:-1).filter(n=>n>=0)))}catch(e){}};
