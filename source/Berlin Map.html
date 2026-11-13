@@ -152,16 +152,17 @@ body.editing .editbar{display:flex}
 html[dir=ltr] .leaflet-popup-content{direction:ltr;text-align:left}
 html[dir=ltr] .pp-de{text-align:left}
 html[dir=ltr] .sec.closed [data-tog]::after{transform:rotate(-45deg)}
-.langbtn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:6px 12px;border:2px solid var(--color-rule);font:700 13px/1 var(--he);color:var(--color-text);white-space:nowrap;transition:var(--t-press);touch-action:manipulation}
-.langbtn svg{width:15px;height:15px;flex:none}
+.hdright{align-items:stretch}.hdright .dates{align-self:stretch}
+.langbtn{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;align-self:stretch;margin-inline-end:-12px;border:1px solid var(--color-rule);font:600 12px/1 var(--he);color:var(--color-text);white-space:nowrap;transition:var(--t-press);touch-action:manipulation}
+.langbtn svg{width:18px;height:18px;flex:none}
 @media (hover:hover){.langbtn:hover{background:var(--color-soft)}}
 .langbtn:active{transform:scale(var(--press-scale));background:var(--color-press)}
 .langbtn:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
-.langbtn .ls{display:none}
+@media (max-width:820px){.hdright{align-items:center}.langbtn{flex-direction:row;align-self:center;margin-inline-end:0;min-height:26px;padding:3px 8px;font-size:11px}.langbtn svg,.langbtn .ll{display:none}.langbtn .ls{display:inline}}
+@media (pointer:coarse){.langbtn{position:relative}.langbtn::before{content:'';position:absolute;inset:-10px -4px}}
+.langbtn .ll{display:none}
 html[dir=ltr] .trip .r{grid-template-columns:104px 1fr}
 @media (max-width:440px){html[dir=ltr] .lg span{display:none}}
-@media (max-width:820px){.langbtn{min-height:26px;padding:3px 8px;font-size:11px}.langbtn svg,.langbtn .ll{display:none}.langbtn .ls{display:inline}}
-@media (pointer:coarse){.langbtn{position:relative}.langbtn::before{content:'';position:absolute;inset:-10px -4px}}
 /* Modernist × Apple: response on press, themed map chrome, touch targets, OS preferences */
 .dates button,.days button,.uitoggle,.adminbtn,.editbar button,.pe-b button,.stopctl button,.trip button.lnkb,.bk button.lnkb,.leaflet-bar a{transition:var(--t-press);touch-action:manipulation}
 .dates button:active,.days button:active,.uitoggle:active,.adminbtn:active,.editbar button:active,.pe-b button:active,.stopctl button:active{transform:scale(var(--press-scale))}
@@ -583,7 +584,9 @@ function applyLang(){const en=EN(),h=document.documentElement;h.lang=en?'en':'he
  hotelM.setIcon(L.divIcon({className:'',html:'<div class="hotel"><span>'+tr('מלון','Hotel')+'</span></div>',iconSize:[52,30],iconAnchor:[26,30],popupAnchor:[0,-30]}))}
 function setLang(l){LANG=l;try{localStorage.setItem('bm_lang',l)}catch(e){}map.closePopup();applyLang();renderTrip();renderLayers();renderDays();renderAlts();renderList();drawRoute(false);setTimeout(()=>map.invalidateSize(),50)}
 document.getElementById('langbtn').onclick=()=>setLang(EN()?'he':'en');
-applyLang();
+// square language button: width = height of the date buttons (desktop)
+const sqLang=()=>{const d=document.querySelector('header.top .dates'),lb=document.getElementById('langbtn');lb.style.width=d&&d.offsetHeight&&!MOBQ.matches?d.offsetHeight+'px':''};const MOBQ=matchMedia('(max-width:820px)');addEventListener('resize',sqLang);if(document.fonts)document.fonts.ready.then(sqLang);
+applyLang();sqLang();
 renderTrip();renderLayers();renderDays();renderAlts();renderList();
 // Clicking a header logo resets the map: no route, all layers on, search cleared, popups closed, centred
 function resetAll(){map.closePopup();state.q='';state.sel=null;const q=document.getElementById('q');if(q)q.value='';state.alt=1;try{localStorage.removeItem('bm_fri_alt')}catch(e){}TSET=new Set(curAlt().stops.map(x=>x.id));setAll(true);selectDay(null);renderAlts();document.querySelectorAll('.toursec,.routesec').forEach(x=>{x.classList.add('closed');const k=x.querySelector('[data-tog]');if(k&&k._sync)k._sync()});if(window.keepSecs)keepSecs()}
