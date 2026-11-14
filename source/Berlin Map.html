@@ -121,6 +121,14 @@ details.bk>summary{cursor:pointer;list-style:none;margin:0;display:flex;align-it
 .pp-a{display:flex;gap:12px;font-size:12px;font-weight:600;border-top:1px solid var(--color-line);padding-top:8px}
 .leaflet-bar{border-radius:0!important;border:2px solid var(--color-rule)!important;box-shadow:none!important}
 .leaflet-bar a{border-radius:0!important;color:var(--color-text)}
+.leaflet-bar a.locbtn{display:flex;align-items:center;justify-content:center;cursor:pointer}
+.locbtn svg{width:18px;height:18px}
+.locbtn.on{color:#1a73e8!important}.locbtn.on.follow svg{fill:#1a73e8}
+.locbtn.wait svg{animation:locw 1s steps(2) infinite}@keyframes locw{50%{opacity:.3}}
+.me-dot{width:16px;height:16px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25),0 1px 4px rgba(0,0,0,.35);box-sizing:border-box}
+.me-dot::after{content:'';position:absolute;inset:-3px;border-radius:50%;background:#1a73e8;opacity:.4;animation:mepulse 2s ease-out infinite;z-index:-1}@keyframes mepulse{to{transform:scale(2.6);opacity:0}}
+.locmsg{position:absolute;z-index:800;top:12px;left:50%;transform:translateX(-50%);background:var(--color-text);color:var(--color-bg);padding:8px 12px;font-size:13px;max-width:min(320px,80vw);text-align:center;display:none}.locmsg.show{display:block}
+@media (prefers-reduced-motion:reduce){.me-dot::after,.locbtn.wait svg{animation:none}}
 .leaflet-control-attribution{font-size:11px}
 .scale-note{position:absolute;z-index:500;bottom:24px;left:12px;background:var(--color-bg);border:2px solid var(--color-rule);padding:6px 10px;font-size:11px;max-width:260px}
 .mapwrap{position:relative;min-height:0}
@@ -628,6 +636,23 @@ secs.forEach((x,n)=>x.classList.toggle('closed',Array.isArray(shut)?shut.include
 const keep=window.keepSecs=()=>{try{localStorage.setItem(CK,JSON.stringify(secs.map((x,n)=>x.classList.contains('closed')?n:-1).filter(n=>n>=0)))}catch(e){}};
 document.querySelectorAll('[data-tog]').forEach(k=>{const sec=k.closest('.sec');k.setAttribute('role','button');k.tabIndex=0;const sync=()=>k.setAttribute('aria-expanded',!sec.classList.contains('closed'));sync();k._sync=sync;const t=()=>{sec.classList.toggle('closed');sync();if(sec.classList.contains('toursec')){const r=document.querySelector('.routesec');r.classList.toggle('closed',sec.classList.contains('closed'));const rk=r.querySelector('[data-tog]');if(rk._sync)rk._sync()}keep();setTimeout(()=>map.invalidateSize(),60)};k.onclick=t;k.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
 // Language switch: swaps static texts (data-en), direction and every rendered list, popup and panel
+// My location: viewer-only live position (blue dot + accuracy circle). Nothing is sent or stored.
+const LOC={id:null,dot:null,acc:null,follow:true,first:true,btn:null,msg:null,mt:0};
+function locLang(){if(LOC.btn){const t=tr('המיקום שלי','My location');LOC.btn.title=t;LOC.btn.setAttribute('aria-label',t)}}
+function locMsg(t){if(!LOC.msg){LOC.msg=document.createElement('div');LOC.msg.className='locmsg';LOC.msg.setAttribute('role','status');map.getContainer().appendChild(LOC.msg)}LOC.msg.textContent=t;LOC.msg.classList.add('show');clearTimeout(LOC.mt);LOC.mt=setTimeout(()=>LOC.msg.classList.remove('show'),5000)}
+function locUI(){const b=LOC.btn;if(!b)return;b.classList.toggle('on',LOC.id!==null&&!!LOC.dot);b.classList.toggle('follow',LOC.id!==null&&LOC.follow);b.classList.toggle('wait',LOC.id!==null&&!LOC.dot);b.setAttribute('aria-pressed',LOC.id!==null?'true':'false')}
+function locStop(){if(LOC.id!==null)navigator.geolocation.clearWatch(LOC.id);LOC.id=null;if(LOC.dot){map.removeLayer(LOC.dot);map.removeLayer(LOC.acc)}LOC.dot=LOC.acc=null;locUI()}
+function locFix(p){const ll=[p.coords.latitude,p.coords.longitude],a=p.coords.accuracy||0;
+ if(!LOC.dot){LOC.acc=L.circle(ll,{radius:a,color:'#1a73e8',weight:1,opacity:.5,fillColor:'#1a73e8',fillOpacity:.12,interactive:false}).addTo(map);LOC.dot=L.marker(ll,{icon:L.divIcon({className:'',html:'<div class="me-dot"></div>',iconSize:[16,16],iconAnchor:[8,8]}),interactive:false,keyboard:false,zIndexOffset:1000}).addTo(map)}
+ else{LOC.dot.setLatLng(ll);LOC.acc.setLatLng(ll).setRadius(a)}
+ if(LOC.first){LOC.first=false;map.setView(ll,Math.max(map.getZoom(),16))}else if(LOC.follow)map.panTo(ll,{animate:true});locUI()}
+function locErr(e){if(e.code===1){locStop();locMsg(tr('הגישה למיקום נחסמה. אפשר אותה בהגדרות הדפדפן לאתר זה ונסה שוב.','Location access is blocked. Allow it for this site in your browser settings and try again.'))}else if(!LOC.dot){locStop();locMsg(tr('לא ניתן לקבוע את המיקום כרגע. נסה שוב בעוד רגע.','Your location is not available right now. Try again in a moment.'))}}
+function locToggle(){if(!('geolocation' in navigator)||!window.isSecureContext){locMsg(tr('הדפדפן הזה לא תומך בהצגת מיקום.','This browser does not support location.'));return}
+ if(LOC.id!==null){if(LOC.dot&&!LOC.follow){LOC.follow=true;map.setView(LOC.dot.getLatLng(),Math.max(map.getZoom(),16));locUI();return}locStop();return}
+ LOC.follow=true;LOC.first=true;LOC.id=navigator.geolocation.watchPosition(locFix,locErr,{enableHighAccuracy:true,maximumAge:5000,timeout:20000});locUI()}
+map.on('dragstart',()=>{if(LOC.id!==null&&LOC.follow){LOC.follow=false;locUI()}});
+L.Control.Loc=L.Control.extend({options:{position:'topleft'},onAdd(){const c=L.DomUtil.create('div','leaflet-bar leaflet-control'),a=L.DomUtil.create('a','locbtn',c);a.href='#';a.setAttribute('role','button');a.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M21 3 3 10.5l7.5 3 3 7.5z"/></svg>';L.DomEvent.disableClickPropagation(c);L.DomEvent.on(a,'click',e=>{L.DomEvent.preventDefault(e);locToggle()});LOC.btn=a;locLang();locUI();return c}});
+new L.Control.Loc().addTo(map);
 function applyLang(){const en=EN(),h=document.documentElement;h.lang=en?'en':'he';h.dir=en?'ltr':'rtl';document.title=en?'Berlin · Office tour 26–29.11.2026':'ברלין · סיור משרד 26–29.11.2026';
  document.querySelectorAll('[data-en]').forEach(el=>{if(el.dataset.he===undefined)el.dataset.he=el.innerHTML;el.innerHTML=en?el.dataset.en:el.dataset.he});
  document.querySelectorAll('[data-en-ph]').forEach(el=>{if(el.dataset.hePh===undefined)el.dataset.hePh=el.placeholder;el.placeholder=en?el.dataset.enPh:el.dataset.hePh});
@@ -636,7 +661,7 @@ function applyLang(){const en=EN(),h=document.documentElement;h.lang=en?'en':'he
  document.querySelectorAll('.logos .lg').forEach(l=>{l.title=tr('איפוס המפה','Reset the map');l.setAttribute('aria-label',tr('איפוס המפה והבחירות','Reset the map and selections'))});
  const ab=document.getElementById('adminbtn');if(ab)ab.textContent=window.ED&&ED.on?tr('סיום עריכה','Done editing'):tr('כניסת מנהל','Admin login');
  hotelM.setIcon(L.divIcon({className:'',html:'<div class="hotel"><span>'+tr('מלון','Hotel')+'</span></div>',iconSize:[52,30],iconAnchor:[26,30],popupAnchor:[0,-30]}))}
-function setLang(l){LANG=l;try{localStorage.setItem('bm_lang',l)}catch(e){}map.closePopup();applyLang();renderTrip();renderLayers();renderDays();renderAlts();renderList();drawRoute(false);setTimeout(()=>map.invalidateSize(),50)}
+function setLang(l){LANG=l;try{localStorage.setItem('bm_lang',l)}catch(e){}map.closePopup();applyLang();renderTrip();renderLayers();renderDays();renderAlts();renderList();drawRoute(false);locLang();setTimeout(()=>map.invalidateSize(),50)}
 document.getElementById('langbtn').onclick=()=>setLang(EN()?'he':'en');
 // square language button: width = height of the date buttons (desktop)
 const sqLang=()=>{const d=document.querySelector('header.top .dates'),lb=document.getElementById('langbtn');lb.style.width=d&&d.offsetHeight&&!MOBQ.matches?d.offsetHeight+'px':''};const MOBQ=matchMedia('(max-width:820px)');addEventListener('resize',sqLang);if(document.fonts)document.fonts.ready.then(sqLang);
